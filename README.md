@@ -221,4 +221,4 @@ GAROTA verification extends exclusively to GAROTA hardware module (within garota
 
 GAROTA hardware module is verified for a generic machine model (its integration with the openMSP430 core is done as examplary prototype). Assuring that the axioms in GAROTA's machine model hold when instatiating GAROTA in each particular MCU core is required in order to obtain GAROTA provable guarantees. This per-core model fact-checking must be performed whenever GAROTA module is instantiated in a different MCU model.
 
-See GAROTA paper for details on the machine model and verified guarantees.
+See GAROTA paper for details on the machine model requirements and verified guarantees (that apply if and only if the machine model requirements are observed).
