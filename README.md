@@ -46,12 +46,11 @@ Dependencies on Ubuntu:
 		sudo make install
 
 ## Building GAROTA Software
-To generate the Microcontroller program memory configuration containing VRASED trusted software (SW-Att) and sample applications we are going to use the Makefile inside the scripts directory:
+To generate the Microcontroller program memory configuration containing the compiled applications we are going to use the Makefile inside the scripts directory:
 
         cd scripts
 
-This repository accompanies 4 test-cases: simple_app, violation_forge_ER, violation_forge_OR, violation_forge_META. (See [Description of Provided test-cases] for details on each test-case)
-These test-cases correspond to one successfull proof of execution (PoX) and 3 cases where PoX fails due to a violation that could be used to attack the correctness of the execution.
+This repository accompanies 3 test-cases: gpio, uart, timer.
 To build GAROTA for a specific test-case run:
 
         make "name of test-case"
@@ -62,13 +61,11 @@ For instance:
 
 to build the software including the binaries of gpio test-case.
 Note that this step will not run any simulation, but simply generate the MSP430 binaries corresponding to the test-case of choice.
-As a result of the build, two files pmem.mem and smem.mem should be created inside msp_bin directory:
+As a result of the build, the following file should be created in the msp_bin directory:
 
 - pmem.mem program memory contents corresponding the application binaries
 
-- smem.mem contains SW-Att binaries.
-
-In the next steps, during synthesis, these files will be loaded to the MSP430 memory when we either: deploy GAROTA on the FPGA or run GAROTA simulation using VIVADO simulation tools.
+In the next steps, during synthesis, this file will be loaded to the MSP430 program memory when we either: deploy GAROTA on the FPGA or run GAROTA simulation using VIVADO simulation tools.
 
 If you want to clean the built files run:
 
@@ -102,7 +99,7 @@ This is an example of how to synthesize and prototype GAROTA using Basys3 FPGA a
         openmsp430/msp_core
         openmsp430/msp_memory
         openmsp430/msp_periph
-        /vrased/hw-mod
+        /garota/hw-mod
         /msp_bin
 
 and select Next.
@@ -165,7 +162,7 @@ To determine the address of an instruction one can check the compilation file pr
 
 1- After Step 10 in [Creating a Vivado Project for GAROTA], select "Run Implementation" and wait until this process completes (typically takes around 1 hour).
 
-2- If implementation succeeds, you will be prompted with another window, select option "Generate Bitstream" in this window. This will generate the bitstream that is used to step up the FPGA according to VRASED hardware and software.
+2- If implementation succeeds, you will be prompted with another window, select option "Generate Bitstream" in this window. This will generate the bitstream that is used to set up the FPGA according to GAROTA hardware and desired application software.
 
 3- After the bitstream is generated, select "Open Hardware Manager", connect the FPGA to you computer's USB port and click "Auto-Connect".
 Your FPGA should be now displayed on the hardware manager menu.
@@ -203,13 +200,13 @@ Note that timer periods used for testing via simalation are often too fast when 
 
 ## Running GAROTA Verification
 
-To check HW-Mod against VRASED and GAROTA LTL subproperties using NuSMV run:
+To check HW-Mod against  GAROTA LTL subproperties using NuSMV run:
 
         make verify
 
 Note that running make verify proofs may take several minutes (Time may very widely depending on the setup, e.g., 22 minutes on a Ubuntu18 VM with 4 cores and 4GB of RAM).
 
-To run GAROTA and VRASED end-to-end implementation proofs check the readme file in:
+To run GAROTA  end-to-end implementation proofs check the readme file in:
 
         verification_specs/garota_end_to_end_proofs
 
