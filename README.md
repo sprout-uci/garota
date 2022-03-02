@@ -1,4 +1,4 @@
-# GAROTA:
+## GAROTA: Generalized Active Root-Of-Trust Architecture
 
 ##### GAROTA paper (USENIX Security'22): [link available soon]
 
