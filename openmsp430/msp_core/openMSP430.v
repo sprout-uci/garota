@@ -565,7 +565,7 @@ tarot tarot_0 (
     .data_wr    (|eu_mb_wr),
     .data_addr  (eu_mab),
 
-    .dma_addr   ({1'b0, dma_addr[15:1]}),
+	.dma_addr   ({dma_addr[15:1], 1'b0}),
     .dma_en     (dma_en),
 
 	.irq		(irq_detect),
