@@ -176,29 +176,23 @@ Your FPGA should be now displayed on the hardware manager menu.
 
 ## Description of Provided test-cases
 
-This repo contains three default test-cases, one for each type of trigger described in GAROTA paper.
+This repo contains three default test-cases, one for each type of trigger described in GAROTA paper. Their implementations are located in the "application" folder in this repo.
 
-#### 1- gpio:
+#### 1- gpio trigger:
 
-The first example, GPIO-TCB, operates in the context of a safety-critical temperature sensor. 
-
-GAROTA is used to assure that the sensor’s most safety-critical function – sounding an alarm – is never prevented from executing due to software compromise of the underlying MCU. 
-
-We use a standard builtin MCU interrupt, based on General Purpose Input/Output (GPIO) to implement a trigger. MCU execution always starts by calling the TCB. Therefore, after MCU initialization/reset any other applications can only execute after TCB. Ensuring that the proper configurations will take place. Specifically `P1` will be configured as input and once pressed the interrupt will be handled by a protected function. These configurations can not change as guaranteed by GAROTA.
+This example uses a standard builtin MCU interrupt, based on General Purpose Input/Output (GPIO) to implement a guaranteed execution trigger. MCU execution always starts by calling the TCB. Therefore, after MCU initialization/reset any other applications can only execute after TCB. THis ensures that the proper configurations will take place. Specifically `P1.0` is configured as input and once pressed the interrupt will be handled by a protected function. These configurations can not change at runtime as enforced by GAROTA. The function tcb_behavior can be modified arbitrarely according to the desired behavior that must execute upon a trigger.
 
 #### 2- timer:
 
-The second example of GAROTA, Timer-TCB, is in the domain of real-time task scheduling. Without GAROTA (even in the presence of a passive RoT), a compromised MCU controlled by malware could ignore performing its periodic security- or safety-critical tasks. 
+The second example of GAROTA, Timer-TCB, is in the domain of secure real-time task scheduling. Without GAROTA (even in the presence of a passive RoT), a compromised MCU controlled by malware could ignore performing its periodic security- or safety-critical tasks. 
 
-In this example we show how GAROTA can ensure that a prescribed task, implemented within the TCB will execute periodically without fail. TCB in this example will configure a timer that once triggered, just as before will spark the execution of our custom handling code.
+This example illustrates GAROTA usage to ensure that a prescribed task, implemented within the TCB will execute periodically without fail. TCB in this example will configure a timer that once triggered, will spark the execution of our custom code. Simimilar to the previous case, the custom code to be executed is defined within the function tcb_behavior.
 
 #### 3- uart:
 
-The last example, NetTCB, uses network event-based trigger to ensure that the TCB quickly filters all received network packets to identify those that carry TCB-destined commands and take the appropriate action. 
+This case uses UART events to trigger guaranteed TCB execution. 
 
-Incoming packets that do not contain such commands are ignored by the TCB and passed on to applications through the regular interface (i.e., reading from the UART buffer). In this example, we implement guaranteed receipt of external reset commands from some trusted remote entity. 
-
-Each incoming UART message will immediately trigger our custom handling procedure, that after filtering the message, it will either pass it along so it can be read by the intended recipient, or will perform a reset.
+Any incoming UART payload trigger the TCB execution. Messages patterns can then be filtered and passed on to the untrusted applications or handled internally by the TCB implementation (which can be customized in the tcb_behavior function). 
 
 
 #### FPGA Runs
