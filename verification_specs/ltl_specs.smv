@@ -1,0 +1,96 @@
+RESET_HANDLER := 0uh16_0000;
+
+-- INIT LOCATION
+INIT_BASE := 0uh16_E000;
+INIT_SIZE := 0uh16_0040; 
+--
+pc_in_INIT := "pc" >= INIT_BASE & "pc" <= (INIT_BASE + INIT_SIZE - 0uh16_2);
+pc_not_in_INIT := !pc_in_INIT;	
+daddr_not_in_INIT := ("data_addr" < INIT_BASE) | ("data_addr" > (INIT_BASE + INIT_SIZE - 0uh16_1));
+daddr_in_INIT := !daddr_not_in_INIT;
+dma_not_in_INIT := "dma_addr" < INIT_BASE | "dma_addr" > INIT_BASE + INIT_SIZE - 0uh16_1;
+dma_in_INIT := !dma_not_in_INIT;
+LAST_INIT_ADDR := (INIT_BASE + INIT_SIZE - 0uh16_2);
+next_pc_in_INIT := next("pc") >= INIT_BASE & next("pc") <= LAST_INIT_ADDR;
+
+
+-- PITA TCB
+TCB_BASE := 0uh16_FAE0;
+TCB_SIZE := 0uh16_03FC;
+--
+pc_in_TCB := "pc" >= TCB_BASE & "pc" <= (TCB_BASE + TCB_SIZE - 0uh16_2);
+pc_not_in_TCB := !pc_in_TCB;	
+daddr_not_in_TCB := "data_addr" < TCB_BASE | "data_addr" > TCB_BASE + TCB_SIZE - 0uh16_1;
+daddr_in_TCB := !daddr_not_in_TCB;
+dma_not_in_TCB := "dma_addr" < TCB_BASE | "dma_addr" > TCB_BASE + TCB_SIZE - 0uh16_1;
+dma_in_TCB := !dma_not_in_TCB;
+LAST_TCB_ADDR := (TCB_BASE + TCB_SIZE - 0uh16_2);
+next_pc_in_TCB := next("pc") >= TCB_BASE & next("pc") <= LAST_TCB_ADDR;
+
+-- PMEM PROGRAM MEMORY
+PMEM_BASE := 0uh16_E000;
+PMEM_SIZE := 0uh16_1FFF; 
+--
+pc_in_PMEM := "pc" >= PMEM_BASE & "pc" <= (PMEM_BASE + PMEM_SIZE - 0uh16_2);
+pc_not_in_PMEM := !pc_in_PMEM;	
+daddr_not_in_PMEM := ("data_addr" < PMEM_BASE) | ("data_addr" > (PMEM_BASE + PMEM_SIZE - 0uh16_1));
+daddr_in_PMEM := !daddr_not_in_PMEM;
+dma_not_in_PMEM := "dma_addr" < PMEM_BASE | "dma_addr" > PMEM_BASE + PMEM_SIZE - 0uh16_1;
+dma_in_PMEM := !dma_not_in_PMEM;
+
+-- UART IRQ CONFIG BUFFER
+UART_BASE := 0uh16_80;
+UART_SIZE := 0uh16_10;
+--
+pc_in_UART := "pc" >= UART_BASE & "pc" <= (UART_BASE + UART_SIZE - 0uh16_2);
+pc_not_in_UART := !pc_in_UART;	
+daddr_not_in_UART := "data_addr" < UART_BASE | "data_addr" > UART_BASE + UART_SIZE - 0uh16_1;
+daddr_in_UART := !daddr_not_in_UART;
+dma_not_in_UART := "dma_addr" < UART_BASE | "dma_addr" > UART_BASE + UART_SIZE - 0uh16_1;
+dma_in_UART := !dma_not_in_UART;
+
+
+-- TIMER IRQ CONFIG BUFFER
+INTR_BASE := 0uh16_0130;
+INTR_SIZE := 0uh16_00D0;
+--
+pc_in_INTR := "pc" >= INTR_BASE & "pc" <= (INTR_BASE + INTR_SIZE - 0uh16_2);
+pc_not_in_INTR := !pc_in_INTR;	
+daddr_not_in_INTR := "data_addr" < INTR_BASE | "data_addr" > INTR_BASE + INTR_SIZE - 0uh16_1;
+daddr_in_INTR := !daddr_not_in_INTR;
+dma_not_in_INTR := "dma_addr" < INTR_BASE | "dma_addr" > INTR_BASE + INTR_SIZE - 0uh16_1;
+dma_in_INTR := !dma_not_in_INTR;
+--
+
+-- P1 IRQ CONFIG BUFFER
+P1_BASE := 0uh16_020;
+P1_SIZE := 0uh16_006;
+--
+daddr_not_in_P1 := "data_addr" < P1_BASE | "data_addr" > P1_BASE + P1_SIZE - 0uh16_1;
+daddr_in_P1 := !daddr_not_in_P1;
+dma_not_in_P1 := "dma_addr" < P1_BASE | "dma_addr" > P1_BASE + P1_SIZE - 0uh16_1;
+dma_in_P1 := !dma_not_in_P1;
+--
+
+LTLSPEC ("reset" U ("pc" = RESET_HANDLER) | G"reset");
+--its Weak until http://nusmv.fbk.eu/courses/icaps03/icaps03-mct.pdf p31
+-----------------------------
+
+-- Property specifications---
+-- TAROT
+
+-- PMEM write-protection (subsumes INIT, ISR (a.k.a., IRQ handlers), and IRQ vector protections)
+LTLSPEC G (("data_wr" & daddr_in_PMEM & pc_not_in_TCB) | ("dma_en" & dma_in_PMEM) -> "reset");
+
+-- Interrupt Configuration Registers Protection (for GPIO, TIMER and UART)
+LTLSPEC G (("data_wr" & daddr_in_P1 & pc_not_in_TCB) | ("dma_en" & dma_in_P1) -> "reset"); -- GPIO P1
+LTLSPEC G (("data_wr" & daddr_in_INTR & pc_not_in_TCB) | ("dma_en" & dma_in_INTR) -> "reset"); -- TIMER A0
+LTLSPEC G (("data_wr" & daddr_in_UART & pc_not_in_TCB) | ("dma_en" & dma_in_UART) -> "reset"); -- UART
+
+-- TCB code atomicity ---
+LTLSPEC G ( !"reset" & pc_in_TCB & !next_pc_in_TCB -> "pc" = LAST_TCB_ADDR | next("reset") );
+LTLSPEC G ( !"reset" & !pc_in_TCB & next_pc_in_TCB -> next("pc") = TCB_BASE | next("reset") );
+LTLSPEC G ( ("irq" | "dma_en") & pc_in_TCB -> "reset");
+
+-- Interrupt Disablement Protection
+LTLSPEC G ( (!"reset" & "gie" & !next("gie") ) -> (next_pc_in_TCB | next("reset")) );

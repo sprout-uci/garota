@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# PROOF: Guaranteed Triggering
+
+ltlfilt -c -f '
+(
+	G (pc_is_first_tcb -> pc_in_tcb) &&
+
+	G( mod_irq_cfg -> ((mod_intr || mod_pmem) && !reset)) &&
+	G( mod_pmem -> (((data_wr && daddr_in_pmem) || (dma_en && dma_addr_in_pmem)) ) ) &&
+	G( mod_intr -> (((data_wr && daddr_in_intr) || (dma_en && dma_addr_in_intr)) ) ) &&
+
+	G( disable_gie -> (!reset && gie && !X(gie)) && !X(reset)) ) &&
+
+
+	( (G(!mod_irq_cfg || pc_in_tcb) && G(!disable_gie || X(pc_in_tcb)) -> G(trigger -> F(pc_is_first_tcb)) ) &&
+
+
+	G( ((data_wr && daddr_in_intr && !pc_in_tcb) || (dma_en && dma_addr_in_intr)) -> reset) &&
+	G( ((data_wr && daddr_in_pmem && !pc_in_tcb) || (dma_en && dma_addr_in_pmem)) -> reset) &&
+    G( (!reset && gie && !X(gie) ) -> (X(pc_in_tcb) || X(reset)))
+
+)	->	(
+    G (
+		trigger -> F(pc_is_first_tcb)
+    )
+)
+' --equivalent-to 'True'
