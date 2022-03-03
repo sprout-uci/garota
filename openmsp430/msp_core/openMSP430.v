@@ -264,7 +264,7 @@ wire [`SMEM_MSB:0] srom_addr;
 wire               srom_cen;
 wire               srom_wen;
 wire        [15:0] srom_dout;
-wire               tarot_reset;
+wire               garota_reset;
 
 wire [`SKEY_MSB:0] skey_addr;
 wire               skey_cen;
@@ -321,7 +321,7 @@ omsp_clock_module clock_module_0 (
     .scg0              (scg0),               // System clock generator 1. Turns off the DCO
     .scg1              (scg1),               // System clock generator 1. Turns off the SMCLK
     .wdt_reset         (wdt_reset),           // Watchdog-timer reset
-    .tarot_reset        (tarot_reset)
+    .garota_reset        (garota_reset)
 );
 
 assign mclk = dma_mclk;
@@ -557,7 +557,7 @@ omsp_mem_backbone mem_backbone_0 (
 
 
 
-tarot tarot_0 (
+garota garota_0 (
     .clk        (dma_mclk),
 
     .pc         (inst_pc),
@@ -572,7 +572,7 @@ tarot tarot_0 (
 	
 	.gie               (gie),
 
-    .reset      (tarot_reset)
+    .reset      (garota_reset)
 );
 
 //=============================================================================

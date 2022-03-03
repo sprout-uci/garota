@@ -1,6 +1,6 @@
 # makfile configuration
-NAME            = tarot
-OBJECTS         = tarot.o
+NAME            = garota
+OBJECTS         = garota.o
 
 # Choose GCC toolchain prefix ('msp430' for MSPGCC / 'msp430-elf' for GCC RedHat/TI)
 MSPGCC_PFX      = msp430

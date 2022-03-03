@@ -3,20 +3,20 @@
 folder="tmp-build"
 rm -rf $folder
 mkdir -p $folder
-mkdir -p $folder/tarot
+mkdir -p $folder/garota
 mkdir -p $folder/$1
 
-cp -rf ../tarot/sw-att/* $folder/tarot/
+cp -rf ../garota/sw-att/* $folder/garota/
 cp -rf ../$1/* $folder/$1/
 cp ./build/linker.msp430.x $folder/$1/
 
-(cd $folder/tarot && make)
+(cd $folder/garota && make)
 
-# tarotsim cfolder verfile submitfile incfile
+# garotasim cfolder verfile submitfile incfile
 cfolder=$folder/$1/
 verfile=$cfolder"/simulation/sim.v"
 submitfile="./build/submit.f"
 incfile="../openmsp430/msp_core/openMSP430_defines.v"
-./build/tarotsim $cfolder $2
+./build/garotasim $cfolder $2
 
 #rm -rf $folder

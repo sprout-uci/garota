@@ -89,7 +89,7 @@ module  omsp_clock_module (
     scg0,                             // System clock generator 1. Turns off the DCO
     scg1,                             // System clock generator 1. Turns off the SMCLK
     wdt_reset,                         // Watchdog-timer reset
-    tarot_reset
+    garota_reset
 );
 
 // OUTPUTs
@@ -136,7 +136,7 @@ input               scan_mode;        // Scan mode
 input               scg0;             // System clock generator 1. Turns off the DCO
 input               scg1;             // System clock generator 1. Turns off the SMCLK
 input               wdt_reset;        // Watchdog-timer reset
-input               tarot_reset;
+input               garota_reset;
 
 //=============================================================================
 // 1)  WIRES & PARAMETER DECLARATION
@@ -1269,7 +1269,7 @@ wire puc_noscan_n;
 wire puc_a_scan;
 
 // Asynchronous PUC reset
-wire puc_a = por | wdt_reset | tarot_reset;
+wire puc_a = por | wdt_reset | garota_reset;
 
 // Synchronous PUC reset
 wire puc_s = dbg_cpu_reset |                              // With the debug interface command

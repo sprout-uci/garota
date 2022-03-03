@@ -174,19 +174,19 @@ wire       [15:0] r14   = dut.openMSP430_0.execution_unit_0.register_file_0.r14;
 wire       [15:0] r15   = dut.openMSP430_0.execution_unit_0.register_file_0.r15;
 
 //TAROT values
-wire        tarot_clk  = dut.openMSP430_0.tarot_0.clk;
-wire        [15:0] tarot_pc  = dut.openMSP430_0.tarot_0.pc;
+wire        garota_clk  = dut.openMSP430_0.garota_0.clk;
+wire        [15:0] garota_pc  = dut.openMSP430_0.garota_0.pc;
 
-wire        tarot_r_en  = dut.openMSP430_0.tarot_0.data_en;
-wire        tarot_w_en  = dut.openMSP430_0.tarot_0.data_wr;
-wire        [15:0] tarot_daddr  = dut.openMSP430_0.tarot_0.data_addr;
+wire        garota_r_en  = dut.openMSP430_0.garota_0.data_en;
+wire        garota_w_en  = dut.openMSP430_0.garota_0.data_wr;
+wire        [15:0] garota_daddr  = dut.openMSP430_0.garota_0.data_addr;
 
-wire        tarot_dma_en  = dut.openMSP430_0.tarot_0.dma_en;
-wire        [15:0] tarot_dma_addr  = dut.openMSP430_0.tarot_0.dma_addr;
-wire        tarot_irq  = dut.openMSP430_0.tarot_0.irq;
+wire        garota_dma_en  = dut.openMSP430_0.garota_0.dma_en;
+wire        [15:0] garota_dma_addr  = dut.openMSP430_0.garota_0.dma_addr;
+wire        garota_irq  = dut.openMSP430_0.garota_0.irq;
 wire        gie          = dut.openMSP430_0.gie;
 
-wire        tarot_reset  = dut.openMSP430_0.tarot_0.tarot_rst;
+wire        garota_reset  = dut.openMSP430_0.garota_0.garota_rst;
 
 wire        uart_rx_irq  = dut.uart_0.irq_uart_rx;
 wire        uart_rxd  = dut.uart_0.uart_rxd;

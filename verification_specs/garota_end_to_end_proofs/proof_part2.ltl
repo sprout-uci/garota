@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# PROOF: Guaranteed Re-Triggering on Failure
+
+ltlfilt -c -f '
+(
+	G (pc_is_first_tcb -> pc_in_tcb) &&
+	G (pc_is_last_tcb -> pc_in_tcb) &&
+	G (!(pc_is_first_tcb && pc_is_last_tcb)) &&
+
+
+	G( mod_pmem -> ( ((data_wr && daddr_in_pmem) || (dma_en && dma_addr_in_pmem)) && !reset) ) &&
+
+
+	( G(!mod_pmem || pc_in_tcb) -> G(reset -> F(pc_is_first_tcb)) ) &&
+
+
+	G ( ((data_wr && daddr_in_pmem && !pc_in_tcb) || (dma_en && dma_addr_in_pmem)) -> reset) &&
+    G ( !reset && pc_in_tcb && !X(pc_in_tcb) -> pc_is_last_tcb || X(reset) ) && 
+    G ( !reset && !pc_in_tcb && X(pc_in_tcb) -> X(pc_is_first_tcb) || X(reset) ) && 
+    G ( (irq || dma_en) && pc_in_tcb -> reset) 
+
+)	->	(
+    G (
+		pc_in_tcb -> (!irq && !dma_en && pc_in_tcb) W (pc_is_last_tcb || F(pc_is_first_tcb))
+    )
+)
+' --equivalent-to 'True'

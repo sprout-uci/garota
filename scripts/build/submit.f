@@ -48,8 +48,8 @@
 ../openmsp430/msp_memory/keyrom.v
 ../openmsp430/msp_memory/pmem.v
 
-+incdir+../tarot/hw-mod/
-../tarot/hw-mod/tarot.v
++incdir+../garota/hw-mod/
+../garota/hw-mod/garota.v
 
 //=============================================================================
 // CPU
