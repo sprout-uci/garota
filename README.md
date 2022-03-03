@@ -31,7 +31,6 @@ Though recent work made progress in terms of incorporating more active behavior 
 	│   └── soundness_and_security_proofs
 	└── garota
 		└── hw-mod
-		    └── hw-mod-auth
 
 ## Dependencies Installation
 
